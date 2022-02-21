@@ -1,0 +1,113 @@
+﻿@model IEnumerable<Anime>
+
+@{
+    ViewData["Title"] = "Animes";
+}
+
+<h2>
+    <i class="icofont-ui-movie logo"></i>
+    Animes
+</h2>
+<hr class="bg-light"/>
+<a class="btn btn-primary" asp-action="Create">
+    <i class="icofont-plus"></i> Add Anime 
+</a>
+
+<div class="mt-4">
+    @if(!Model.Any())
+    {
+        <div class="alert alert-warning" role="alert">
+            <i class="icofont-warning"></i> No Animes Found!
+        </div>
+    }
+    else
+    {
+        <div class="row">
+
+            @foreach (var anime in Model)
+            {
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="row no-gutters">
+                            <div class="col-md-2 poster" style="background-image: url(data:image\/*;base64,@(Convert.ToBase64String(anime.Poster)))"></div>
+                            <div class="col-md-10">
+                                <div class="card-body d-flex flex-column justify-content-between h-100">
+                                    <div>
+                                        <h4 class="card-title font-weight-bold" style="color: #8b57e5;">@anime.Title <small>(@anime.Year)</small></h4>
+                                        <p class="card-text text-light text-justify">@(anime.Story.Length > 500 ? $"{anime.Story.Substring(0, 500)}..." : anime.Story)</p>
+                                    </div>
+                                    <div class="d-flex justify-content-between">
+                                        <p class="card-text mb-0 mt-2">
+                                            <i class="icofont-star text-warning"></i>
+                                            <small class="text-light">@anime.Rate.ToString("0.0")</small>
+                                        </p>
+                                        <div>
+                                            <a asp-action="Details" asp-route-id="@anime.Id" class="btn btn-outline-info">
+                                                <i class="icofont-camera"></i>
+                                                Details
+                                            </a>
+                                            <a asp-action="Edit" asp-route-id="@anime.Id" class="btn btn-outline-primary">
+                                                <i class="icofont-pencil"></i>
+                                                Edit
+                                            </a>
+                                            <a href="javascript:;" class="btn btn-danger js-delete" data-id="@anime.Id">
+                                                <i class="icofont-trash"></i> 
+                                                Delete
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".js-delete").on('click', function () {
+                var btn = $(this);
+
+                bootbox.confirm({
+                    message: "Are you sure that you need to delete this anime?",
+                    buttons: {
+                        confirm: {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        },
+                        cancel: {
+                            label: 'No',
+                            className: 'btn-outline-secondary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            $.ajax({
+                                url: '/animes/delete/' + btn.data('id'),
+                                success: function () {
+                                    var animeContainer = btn.parents('.col-12');
+
+                                    animeContainer.addClass('animate__animated animate__zoomOut');
+
+                                    setTimeout(function () {
+                                        animeContainer.remove();
+                                    }, 1000);
+
+                                    toastr.success('Anime Deleted Successfully');
+                                },
+                                error: function () {
+                                    toastr.error("Something Wrong");
+                                }
+                            })
+                        } 
+                    }
+                });
+            });
+        });
+    </script>
+}

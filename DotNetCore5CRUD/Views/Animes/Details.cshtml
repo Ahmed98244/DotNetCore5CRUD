@@ -1,0 +1,29 @@
+﻿@model DotNetCore5CRUD.Models.Anime
+
+@{ 
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="row mt-60-px justify-content-between">
+    <div class="col-md-3">
+        <img src="data:image\/*;base64,@(Convert.ToBase64String(Model.Poster))" class="img-thumbnail" alt="Poster" />
+    </div>
+    <div class="col-md-7">
+        <div class="d-flex justify-content-between mb-3">
+            <h3 class="logo">@Model.Title</h3>
+            <span class="mt-2">
+                <i class="icofont-star text-warning"></i>
+                <span>@Model.Rate.ToString("0.0")</span>
+            </span>
+        </div>
+        <span class="mr-3" style="color: #03a9f4;">
+            <i class="icofont-calendar"></i>
+            <span >@Model.Year</span> 
+        </span>
+        <span style="color: #009688;">
+            <i class="icofont-film"></i>
+            @Model.Category.Name
+        </span>
+        <p class="text-justify mt-3">@Model.Story</p>
+    </div>
+</div>
